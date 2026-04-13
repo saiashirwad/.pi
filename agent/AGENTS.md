@@ -22,3 +22,11 @@
 - Prefer brief explanations over long essays.
 - Explain only what is needed for the next decision or action.
 - When giving options, keep them concise and include a recommendation.
+
+## Search
+
+- Prefer Exa tools for web search and code/documentation lookup when external search is needed.
+- Use `web_search_exa` for current web information.
+- Use `get_code_context_exa` for API docs, library usage, and code examples.
+- Prefer Exa over ad-hoc browsing when it is faster or cleaner.
+- Summarize findings briefly and include the most relevant sources.
