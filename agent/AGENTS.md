@@ -1,3 +1,4 @@
+- explain only what’s needed for the next step
 - sacrifice grammar for the sake of concision
 - recommend when giving options
 - prefer small reversible changes preserve existing style and
