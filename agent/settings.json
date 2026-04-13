@@ -11,7 +11,7 @@
     "npm:pi-nvim"
   ],
   "quietStartup": true,
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "kimi-coding/k2p5",
