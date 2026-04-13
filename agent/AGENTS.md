@@ -6,6 +6,7 @@
 - For non-trivial work, briefly state the plan before making changes.
 - Ask before broad, destructive, or hard-to-reverse actions.
 - Prefer safe inspection before mutation.
+- Use the `agent-browser` skill for any task involving websites, browser automation, navigation, forms, screenshots, scraping, or web app QA.
 
 ## Subagents
 

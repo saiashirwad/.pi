@@ -9,7 +9,9 @@
     "npm:pi-interactive-shell",
     "npm:pi-subagents",
     "npm:pi-nvim",
-    "npm:@benvargas/pi-exa-mcp"
+    "npm:@benvargas/pi-exa-mcp",
+    "npm:pi-mcp-adapter",
+    "npm:pi-agent-browser"
   ],
   "quietStartup": true,
   "hideThinkingBlock": true,
