@@ -23,18 +23,6 @@
 - Prefer the main thread for orchestration and synthesis, not broad exploratory searching.
 - When using subagents, choose the smallest useful number that gives parallelism without unnecessary overhead.
 
-## Oracle routing
-
-- If the user explicitly says `ask oracle`, `use oracle`, or otherwise clearly requests Oracle, route to Oracle by default.
-- Prefer the closest Oracle prompt template when obvious:
-  - review / regressions -> `oracle-review` or `oracle-regression`
-  - debugging -> `oracle-debug`
-  - planning / refactor -> `oracle-plan`
-  - architecture / design -> `oracle-arch`
-- Otherwise call the `oracle` subagent directly.
-- For explicit Oracle requests, avoid broad main-thread inspection before delegation; only gather minimal routing context if truly needed.
-- Treat Oracle as advisory and read-only by default.
-
 ## Communication
 
 - Keep answers short and to the point.
