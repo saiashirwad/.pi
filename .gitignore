@@ -1,0 +1,26 @@
+# Secrets / credentials
+agent/auth.json
+agent/auth.json.*
+
+# Runtime history / logs
+agent/run-history.jsonl
+agent/*.log
+agent/logs/
+
+# Session/state caches
+agent/sessions/
+agent/cache/
+agent/tmp/
+agent/temp/
+agent/*.tmp
+agent/*.cache
+
+# Package installs / generated deps
+agent/git/
+agent/npm/
+node_modules/
+
+# OS/editor noise
+.DS_Store
+*.swp
+*.swo

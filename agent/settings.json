@@ -1,0 +1,21 @@
+{
+  "lastChangelogVersion": "0.66.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4",
+  "theme": "light",
+  "packages": [
+    "npm:pi-answer",
+    "npm:@plannotator/pi-extension",
+    "npm:pi-interactive-shell",
+    "npm:pi-subagents",
+    "npm:pi-nvim"
+  ],
+  "quietStartup": true,
+  "hideThinkingBlock": true,
+  "defaultThinkingLevel": "high",
+  "enabledModels": [
+    "kimi-coding/k2p5",
+    "openai-codex/gpt-5.4",
+    "openai-codex/gpt-5.4-mini"
+  ]
+}
