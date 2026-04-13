@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.66.1",
-  "defaultProvider": "kimi-coding",
-  "defaultModel": "k2p5",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
   "theme": "light",
   "packages": [
     "npm:pi-answer",
@@ -12,7 +12,7 @@
     "npm:@benvargas/pi-exa-mcp"
   ],
   "quietStartup": true,
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "defaultThinkingLevel": "medium",
   "enabledModels": [
     "kimi-coding/k2p5",
