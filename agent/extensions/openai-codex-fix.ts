@@ -13,7 +13,9 @@ function readJson(file: string): any {
 
 function writeJson(file: string, value: any): void {
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, { mode: 0o600 });
+  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, {
+    mode: 0o600,
+  });
 }
 
 function decodeJwtPayload(token?: string | null): any | null {
@@ -32,13 +34,17 @@ function decodeJwtPayload(token?: string | null): any | null {
 function deriveAccountIdFromPayload(payload: any): string | null {
   const auth = payload?.[OPENAI_AUTH_CLAIM];
   if (!auth || typeof auth !== "object") return null;
-  if (typeof auth.chatgpt_account_id === "string" && auth.chatgpt_account_id.length > 0) {
+  if (
+    typeof auth.chatgpt_account_id === "string" &&
+    auth.chatgpt_account_id.length > 0
+  ) {
     return auth.chatgpt_account_id;
   }
   const orgs = auth.organizations;
   if (Array.isArray(orgs)) {
-    const preferred = orgs.find((org: any) => org?.is_default && typeof org?.id === "string")
-      ?? orgs.find((org: any) => typeof org?.id === "string");
+    const preferred =
+      orgs.find((org: any) => org?.is_default && typeof org?.id === "string") ??
+      orgs.find((org: any) => typeof org?.id === "string");
     if (preferred?.id) return preferred.id;
   }
   return null;
@@ -50,9 +56,11 @@ function getCodexAccountIdFromCodexAuth(): string | null {
   try {
     const codexAuth = readJson(codexAuthFile);
     const tokens = codexAuth?.tokens ?? {};
-    return deriveAccountIdFromPayload(decodeJwtPayload(tokens.id_token))
-      ?? deriveAccountIdFromPayload(decodeJwtPayload(tokens.access_token))
-      ?? (typeof tokens.account_id === "string" ? tokens.account_id : null);
+    return (
+      deriveAccountIdFromPayload(decodeJwtPayload(tokens.id_token)) ??
+      deriveAccountIdFromPayload(decodeJwtPayload(tokens.access_token)) ??
+      (typeof tokens.account_id === "string" ? tokens.account_id : null)
+    );
   } catch {
     return null;
   }
@@ -64,7 +72,9 @@ function getCodexAccountIdFromPiAuth(): string | null {
   try {
     const piAuth = readJson(piAuthFile);
     const creds = piAuth?.[PI_PROVIDER_ID];
-    return typeof creds?.accountId === "string" && creds.accountId.length > 0 ? creds.accountId : null;
+    return typeof creds?.accountId === "string" && creds.accountId.length > 0
+      ? creds.accountId
+      : null;
   } catch {
     return null;
   }
@@ -75,11 +85,15 @@ function getBestAccountId(): string | null {
 }
 
 function installAtobPatch(): void {
-  const g = globalThis as typeof globalThis & { [PATCH_MARKER]?: boolean; atob?: (data: string) => string };
+  const g = globalThis as typeof globalThis & {
+    [PATCH_MARKER]?: boolean;
+    atob?: (data: string) => string;
+  };
   if (g[PATCH_MARKER]) return;
-  const nativeAtob = typeof g.atob === "function"
-    ? g.atob.bind(g)
-    : ((data: string) => Buffer.from(data, "base64").toString("binary"));
+  const nativeAtob =
+    typeof g.atob === "function"
+      ? g.atob.bind(g)
+      : (data: string) => Buffer.from(data, "base64").toString("binary");
 
   g.atob = (input: string): string => {
     let normalized = input;
@@ -112,7 +126,11 @@ function installAtobPatch(): void {
   g[PATCH_MARKER] = true;
 }
 
-function syncCodexAuthIntoPi(): { accountId: string | null; expires: number; written: string } {
+function syncCodexAuthIntoPi(): {
+  accountId: string | null;
+  expires: number;
+  written: string;
+} {
   const codexAuthFile = path.join(os.homedir(), ".codex", "auth.json");
   const piAuthFile = path.join(os.homedir(), ".pi", "agent", "auth.json");
 
@@ -127,15 +145,19 @@ function syncCodexAuthIntoPi(): { accountId: string | null; expires: number; wri
   const idToken = tokens.id_token;
 
   if (typeof access !== "string" || typeof refresh !== "string") {
-    throw new Error("~/.codex/auth.json is missing access_token or refresh_token.");
+    throw new Error(
+      "~/.codex/auth.json is missing access_token or refresh_token.",
+    );
   }
 
   const accessPayload = decodeJwtPayload(access);
   const exp = Number(accessPayload?.exp ?? 0);
-  const expires = Number.isFinite(exp) && exp > 0 ? exp * 1000 : Date.now() + 30 * 60 * 1000;
-  const accountId = deriveAccountIdFromPayload(decodeJwtPayload(idToken))
-    ?? deriveAccountIdFromPayload(accessPayload)
-    ?? (typeof tokens.account_id === "string" ? tokens.account_id : null);
+  const expires =
+    Number.isFinite(exp) && exp > 0 ? exp * 1000 : Date.now() + 30 * 60 * 1000;
+  const accountId =
+    deriveAccountIdFromPayload(decodeJwtPayload(idToken)) ??
+    deriveAccountIdFromPayload(accessPayload) ??
+    (typeof tokens.account_id === "string" ? tokens.account_id : null);
 
   const current = fs.existsSync(piAuthFile) ? readJson(piAuthFile) : {};
   current[PI_PROVIDER_ID] = {
@@ -168,8 +190,13 @@ export default function (pi: ExtensionAPI) {
       installAtobPatch();
       const result = syncCodexAuthIntoPi();
       const acct = result.accountId ? ` (${result.accountId})` : "";
-      ctx.ui.notify(`Imported Codex auth into pi${acct}`, "success");
-      ctx.ui.setStatus("codex-login", result.accountId ? `codex acct ${result.accountId.slice(0, 10)}…` : "codex auth synced");
+      ctx.ui.notify(`Imported Codex auth into pi${acct}`, "info");
+      ctx.ui.setStatus(
+        "codex-login",
+        result.accountId
+          ? `codex acct ${result.accountId.slice(0, 10)}…`
+          : "codex auth synced",
+      );
     },
   });
 }

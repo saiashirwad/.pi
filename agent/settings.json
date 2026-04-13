@@ -12,7 +12,7 @@
   ],
   "quietStartup": true,
   "hideThinkingBlock": false,
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "medium",
   "enabledModels": [
     "kimi-coding/k2p5",
     "openai-codex/gpt-5.4",
