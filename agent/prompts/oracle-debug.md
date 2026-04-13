@@ -1,14 +1,16 @@
 ---
 description: Ask Oracle to debug a failure or confusing behavior
 ---
-Use the `subagent` tool to run the `oracle` agent for this debugging task:
+Use the `subagent` tool with `agent: "oracle"` for this task, not the main thread unless subagent invocation fails:
 
 $@
 
 Requirements for the Oracle run:
 - Stay read-only and investigation-first.
-- Inspect relevant code, logs, config, commands, and git history if useful.
-- Prioritize root-cause analysis, likely failure modes, and fastest safe validation steps.
+- Start by identifying what changed, last known good state, reproducibility clues, and relevant config/env differences.
+- Inspect relevant code, logs, commands, and git history when useful.
+- Prioritize root-cause analysis, top 2-3 hypotheses, and the fastest discriminating validation steps.
+- Ground findings in evidence with file paths, commands inspected, and commit hashes when available.
 - Return plain markdown advice only.
 
 Preferred output:
@@ -16,3 +18,4 @@ Preferred output:
 - Findings
 - Most likely causes
 - Recommended next debugging steps
+- Confidence

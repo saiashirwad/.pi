@@ -9,6 +9,7 @@ A small local-only Oracle setup for Pi, built on top of the installed `pi-subage
 - `~/.pi/agent/prompts/oracle-debug.md`
 - `~/.pi/agent/prompts/oracle-plan.md`
 - `~/.pi/agent/prompts/oracle-arch.md`
+- `~/.pi/agent/prompts/oracle-regression.md`
 - `~/.pi/agent/skills/oracle/SKILL.md`
 - `~/.pi/agent/oracle/README.md`
 
@@ -37,6 +38,7 @@ Then use any of these prompt templates:
 - `/oracle-debug ...`
 - `/oracle-plan ...`
 - `/oracle-arch ...`
+- `/oracle-regression ...`
 
 ## Example prompts
 
@@ -45,6 +47,7 @@ Then use any of these prompt templates:
 /oracle-debug debug why this command fails: npm test -- --grep auth
 /oracle-plan plan a low-risk refactor of these files: src/auth.ts src/session.ts
 /oracle-arch analyze whether this architecture is sound for multi-tenant background jobs
+/oracle-regression investigate regressions introduced by the last 2 commits in auth and session handling
 ```
 
 You can also ask Pi directly to use the `oracle` subagent.
@@ -53,6 +56,8 @@ You can also ask Pi directly to use the `oracle` subagent.
 
 - Uses the installed `pi-subagents` setup already present in `~/.pi/agent/settings.json`
 - Oracle is configured as advisory and read-only in spirit
+- Oracle is set to `openai-codex/gpt-5.4` with `thinking: xhigh`
+- Oracle has `openai-codex/gpt-5.4-mini` as a fallback
 - Oracle can inspect code and run read-only shell investigation
 - Oracle may inspect `git diff`, `git log`, and `git show`
 - Oracle may do optional web research only when explicitly useful/requested
