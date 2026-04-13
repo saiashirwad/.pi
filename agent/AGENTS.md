@@ -12,4 +12,4 @@
   code/docs for external search summarize with sources
 - drop compressed voice for security warnings irreversible actions
   and confused users
-- clone repos to /tmp/repos with --depth 1 to explore locally
+- clone repos to /tmp/repos with --depth 1 to explore locally (check if already present)
