@@ -3,7 +3,12 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import {
+  AuthStorage,
+  getAgentDir,
+  type ExtensionAPI,
+  type OAuthCredential,
+} from "@mariozechner/pi-coding-agent";
 
 const OPENAI_AUTH_CLAIM = "https://api.openai.com/auth";
 const PI_PROVIDER_ID = "openai-codex";
@@ -11,13 +16,6 @@ const PATCH_MARKER = "__piCodexAtobPatched";
 
 function readJson(file: string): any {
   return JSON.parse(fs.readFileSync(file, "utf8"));
-}
-
-function writeJson(file: string, value: any): void {
-  fs.mkdirSync(path.dirname(file), { recursive: true });
-  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, {
-    mode: 0o600,
-  });
 }
 
 function decodeJwtPayload(token?: string | null): any | null {
@@ -52,8 +50,16 @@ function deriveAccountIdFromPayload(payload: any): string | null {
   return null;
 }
 
+function getCodexAuthPath(): string {
+  return path.join(os.homedir(), ".codex", "auth.json");
+}
+
+function getPiAuthPath(): string {
+  return path.join(getAgentDir(), "auth.json");
+}
+
 function getCodexAccountIdFromCodexAuth(): string | null {
-  const codexAuthFile = path.join(os.homedir(), ".codex", "auth.json");
+  const codexAuthFile = getCodexAuthPath();
   if (!fs.existsSync(codexAuthFile)) return null;
   try {
     const codexAuth = readJson(codexAuthFile);
@@ -69,12 +75,9 @@ function getCodexAccountIdFromCodexAuth(): string | null {
 }
 
 function getCodexAccountIdFromPiAuth(): string | null {
-  const piAuthFile = path.join(os.homedir(), ".pi", "agent", "auth.json");
-  if (!fs.existsSync(piAuthFile)) return null;
   try {
-    const piAuth = readJson(piAuthFile);
-    const creds = piAuth?.[PI_PROVIDER_ID];
-    return typeof creds?.accountId === "string" && creds.accountId.length > 0
+    const creds = AuthStorage.create().get(PI_PROVIDER_ID);
+    return creds?.type === "oauth" && typeof creds.accountId === "string" && creds.accountId.length > 0
       ? creds.accountId
       : null;
   } catch {
@@ -89,13 +92,10 @@ function getBestAccountId(): string | null {
 function installAtobPatch(): void {
   const g = globalThis as typeof globalThis & {
     [PATCH_MARKER]?: boolean;
-    atob?: (data: string) => string;
+    atob: (data: string) => string;
   };
   if (g[PATCH_MARKER]) return;
-  const nativeAtob =
-    typeof g.atob === "function"
-      ? g.atob.bind(g)
-      : (data: string) => Buffer.from(data, "base64").toString("binary");
+  const nativeAtob = globalThis.atob.bind(globalThis);
 
   g.atob = (input: string): string => {
     let normalized = input;
@@ -133,8 +133,7 @@ function syncCodexAuthIntoPi(): {
   expires: number;
   written: string;
 } {
-  const codexAuthFile = path.join(os.homedir(), ".codex", "auth.json");
-  const piAuthFile = path.join(os.homedir(), ".pi", "agent", "auth.json");
+  const codexAuthFile = getCodexAuthPath();
 
   if (!fs.existsSync(codexAuthFile)) {
     throw new Error("~/.codex/auth.json not found. Run codex login first.");
@@ -161,18 +160,20 @@ function syncCodexAuthIntoPi(): {
     deriveAccountIdFromPayload(accessPayload) ??
     (typeof tokens.account_id === "string" ? tokens.account_id : null);
 
-  const current = fs.existsSync(piAuthFile) ? readJson(piAuthFile) : {};
-  current[PI_PROVIDER_ID] = {
-    type: "oauth",
-    access,
-    refresh,
-    expires,
-    accountId,
-    idToken,
-  };
-  writeJson(piAuthFile, current);
+  const auth = AuthStorage.create();
+  auth.set(
+    PI_PROVIDER_ID,
+    {
+      type: "oauth",
+      access,
+      refresh,
+      expires,
+      accountId,
+      idToken,
+    } satisfies OAuthCredential,
+  );
 
-  return { accountId, expires, written: piAuthFile };
+  return { accountId, expires, written: getPiAuthPath() };
 }
 
 export default function (pi: ExtensionAPI) {
