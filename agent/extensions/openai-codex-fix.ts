@@ -1,3 +1,5 @@
+// Syncs OpenAI Codex auth into pi, patches atob to preserve account IDs in
+// decoded auth payloads, and exposes a command to import Codex login data.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
