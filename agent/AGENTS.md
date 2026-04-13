@@ -15,6 +15,12 @@
 - Prefer subagents for codebase exploration, search, comparison, and side investigations.
 - Prefer `kimi-coding/k2p5` for exploratory subagents when appropriate.
 - Keep the main thread focused on coordination, synthesis, and the final answer.
+- Use subagents proactively when a task clearly benefits from decomposition; do not wait for the user to request an exact number.
+- For independent exploration, prefer multiple parallel subagents over a single broad one.
+- For sequential work, prefer a short chain such as scout -> planner -> worker/reviewer.
+- Keep each subagent focused on one narrow question or slice of work.
+- Prefer the main thread for orchestration and synthesis, not broad exploratory searching.
+- When using subagents, choose the smallest useful number that gives parallelism without unnecessary overhead.
 
 ## Communication
 
