@@ -14,7 +14,7 @@
 - Before spawning subagents, break the task into smaller independent subtasks.
 - When useful, spawn multiple subagents in parallel instead of doing all exploration in the main thread.
 - Prefer subagents for codebase exploration, search, comparison, and side investigations.
-- Prefer `kimi-coding/k2p5` for exploratory subagents when appropriate.
+- Prefer openai-codex/gpt-5.4-mini for exploratory subagents when appropriate.
 - Keep the main thread focused on coordination, synthesis, and the final answer.
 - Use subagents proactively when a task clearly benefits from decomposition; do not wait for the user to request an exact number.
 - For independent exploration, prefer multiple parallel subagents over a single broad one.
