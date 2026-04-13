@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.66.1",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4",
+  "defaultModel": "gpt-5.4-mini",
   "theme": "light",
   "packages": [
     "npm:pi-answer",
@@ -15,10 +15,15 @@
   ],
   "quietStartup": true,
   "hideThinkingBlock": true,
-  "defaultThinkingLevel": "off",
+  "defaultThinkingLevel": "medium",
   "enabledModels": [
     "kimi-coding/k2p5",
     "openai-codex/gpt-5.4",
     "openai-codex/gpt-5.4-mini"
-  ]
+  ],
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 20000,
+    "keepRecentTokens": 20000
+  }
 }

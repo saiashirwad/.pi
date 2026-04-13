@@ -56,9 +56,12 @@ You can also ask Pi directly to use the `oracle` subagent.
 
 - Uses the installed `pi-subagents` setup already present in `~/.pi/agent/settings.json`
 - Oracle is configured as advisory and read-only in spirit
-- Oracle is set to `openai-codex/gpt-5.4` with `thinking: xhigh`
+- Oracle is set to `openai-codex/gpt-5.4` with `thinking: high`
 - Oracle has `openai-codex/gpt-5.4-mini` as a fallback
 - Oracle can inspect code and run read-only shell investigation
+- Oracle may delegate focused exploration to subagents like `scout`, `context-builder`, and `researcher` to preserve context headroom
+- Oracle should prefer fresh child runs by default and use forked context selectively
+- Oracle should synthesize compact child outputs rather than accumulate broad raw context in one run
 - Oracle may inspect `git diff`, `git log`, and `git show`
 - Oracle may do optional web research only when explicitly useful/requested
 - Output is intended to be plain markdown advice, not JSON
