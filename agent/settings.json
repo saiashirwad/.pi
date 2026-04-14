@@ -12,17 +12,15 @@
     "npm:@benvargas/pi-exa-mcp",
     "npm:pi-mcp-adapter",
     "npm:pi-agent-browser",
-    "npm:@calesennett/pi-codex-fast"
+    "npm:@calesennett/pi-codex-fast",
+    "npm:@the-forge-flow/fff-pi"
   ],
   "quietStartup": true,
   "hideThinkingBlock": true,
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "kimi-coding/k2.6-code-preview",
-    "kimi-coding/k2p5",
-    "openai-codex/gpt-5.4",
-    "openai-codex/gpt-5.4-mini",
-    "openai-codex/gpt-5.3-codex-spark"
+    "openai-codex/gpt-5.4"
   ],
   "pi-codex-fast": {
     "enabled": true

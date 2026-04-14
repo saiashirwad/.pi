@@ -10,3 +10,5 @@
 - use exa `web_search_exa` for web and `get_code_context_exa` for code/docs for external search summarize with sources
 - clone repos to /tmp/repos with --depth 1 to explore locally (check if already present)
 - always break info into bullets never dense paragraphs
+- prefer `tff-fff_search` for ambiguous lookups
+- use `tff-fff_find` instead of `glob` for file discovery
