@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.66.1",
-  "defaultProvider": "kimi-coding",
-  "defaultModel": "k2p5",
-  "theme": "light",
+  "lastChangelogVersion": "0.67.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4",
+  "theme": "dark",
   "packages": [
     "npm:pi-answer",
     "npm:@plannotator/pi-extension",
@@ -11,7 +11,8 @@
     "npm:pi-nvim",
     "npm:@benvargas/pi-exa-mcp",
     "npm:pi-mcp-adapter",
-    "npm:pi-agent-browser"
+    "npm:pi-agent-browser",
+    "npm:@calesennett/pi-codex-fast"
   ],
   "quietStartup": true,
   "hideThinkingBlock": true,
@@ -19,8 +20,12 @@
   "enabledModels": [
     "kimi-coding/k2p5",
     "openai-codex/gpt-5.4",
-    "openai-codex/gpt-5.4-mini"
+    "openai-codex/gpt-5.4-mini",
+    "openai-codex/gpt-5.3-codex-spark"
   ],
+  "pi-codex-fast": {
+    "enabled": true
+  },
   "compaction": {
     "enabled": true,
     "reserveTokens": 20000,
