@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.67.1",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4",
+  "defaultProvider": "kimi-coding",
+  "defaultModel": "k2.6-code-preview",
   "theme": "dark",
   "packages": [
     "npm:pi-answer",
@@ -18,6 +18,7 @@
   "hideThinkingBlock": true,
   "defaultThinkingLevel": "high",
   "enabledModels": [
+    "kimi-coding/k2.6-code-preview",
     "kimi-coding/k2p5",
     "openai-codex/gpt-5.4",
     "openai-codex/gpt-5.4-mini",
