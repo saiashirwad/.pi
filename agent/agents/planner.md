@@ -2,7 +2,7 @@
 name: planner
 description: Creates implementation plans from context and requirements
 tools: read, grep, find, ls, write
-model: kimi-coding/k2p5
+model: kimi-coding/k2.6-code-preview
 thinking: high
 output: plan.md
 defaultReads: context.md
