@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.67.2",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4",
+  "defaultProvider": "kimi-coding",
+  "defaultModel": "k2.6-code-preview",
   "theme": "light",
   "packages": [
     "npm:pi-answer",
@@ -16,7 +16,7 @@
     "npm:@the-forge-flow/fff-pi"
   ],
   "quietStartup": true,
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "defaultThinkingLevel": "medium",
   "enabledModels": [
     "kimi-coding/k2.6-code-preview",
@@ -29,5 +29,6 @@
     "enabled": true,
     "reserveTokens": 20000,
     "keepRecentTokens": 20000
-  }
+  },
+  "treeFilterMode": "user-only"
 }
