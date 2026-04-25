@@ -1,7 +1,7 @@
 ---
 name: worker
 description: General-purpose subagent with full capabilities, isolated context
-model: kimi-coding/k2.6-code-preview
+model: kimi-coding/k2p6
 defaultReads: context.md, plan.md
 defaultProgress: true
 ---

@@ -2,7 +2,7 @@
 name: context-builder
 description: Analyzes requirements and codebase, generates context and meta-prompt
 tools: read, grep, find, ls, bash, web_search
-model: kimi-coding/k2.6-code-preview
+model: kimi-coding/k2p6
 output: context.md
 ---
 

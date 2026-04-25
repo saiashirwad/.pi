@@ -2,7 +2,7 @@
 name: scout
 description: Fast codebase recon that returns compressed context for handoff
 tools: read, grep, find, ls, bash, write
-model: kimi-coding/k2.6-code-preview
+model: kimi-coding/k2p6
 output: context.md
 defaultProgress: true
 ---
