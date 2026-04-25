@@ -1,0 +1,34 @@
+{
+  "lastChangelogVersion": "0.67.2",
+  "defaultProvider": "kimi-coding",
+  "defaultModel": "k2.6-code-preview",
+  "theme": "light",
+  "packages": [
+    "npm:pi-answer",
+    "npm:@plannotator/pi-extension",
+    "npm:pi-interactive-shell",
+    "npm:pi-subagents",
+    "npm:pi-nvim",
+    "npm:@benvargas/pi-exa-mcp",
+    "npm:pi-mcp-adapter",
+    "npm:pi-agent-browser",
+    "npm:@calesennett/pi-codex-fast",
+    "npm:@the-forge-flow/fff-pi"
+  ],
+  "quietStartup": true,
+  "hideThinkingBlock": false,
+  "defaultThinkingLevel": "medium",
+  "enabledModels": [
+    "kimi-coding/k2.6-code-preview",
+    "openai-codex/gpt-5.4"
+  ],
+  "pi-codex-fast": {
+    "enabled": true
+  },
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 20000,
+    "keepRecentTokens": 20000
+  },
+  "treeFilterMode": "user-only"
+}

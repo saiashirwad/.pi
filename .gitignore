@@ -15,13 +15,6 @@ agent/temp/
 agent/*.tmp
 agent/*.cache
 
-# Local settings
-agent/settings.json
-
-# fff runtime databases
-fff/
-.pi/fff/
-
 # Package installs / generated deps
 agent/git/
 agent/npm/
