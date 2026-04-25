@@ -14,8 +14,11 @@
   ],
   "quietStartup": true,
   "hideThinkingBlock": false,
-  "defaultThinkingLevel": "medium",
-  "enabledModels": ["openai-codex/gpt-5.5", "kimi-coding/k2p6"],
+  "defaultThinkingLevel": "low",
+  "enabledModels": [
+    "openai-codex/gpt-5.5",
+    "kimi-coding/k2p6"
+  ],
   "pi-codex-fast": {
     "enabled": true
   },
