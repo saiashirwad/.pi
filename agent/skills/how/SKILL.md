@@ -10,7 +10,7 @@ Explore the codebase to answer "how does X work?" questions. Produce clear archi
 Two modes:
 
 1. **Explain** (default) — explore the codebase and produce a clear explanation
-2. **Critique** — explain first, then spawn multiple models to independently identify architectural issues
+2. **Critique** — explain first, then independently identify architectural issues
 
 ## Explain Mode
 
@@ -27,10 +27,10 @@ Identify the scope. If it's ambiguous, make your best guess and state your inter
 
 **Assess complexity to decide the approach:**
 
-- **Simple** (a single module, a small utility, a narrow question like "how does function X work"): Skip explorer agents entirely. The explainer agent explores and explains in a single pass. Go directly to Step 2b.
-- **Complex** (a subsystem spanning multiple files/services, a cross-cutting feature, a full architectural overview): Spawn parallel explorer agents first, then hand off to the explainer. Go to Step 2a.
+- **Simple** (a single module, a small utility, a narrow question like "how does function X work"): Skip parallel exploration. A single agent explores and explains in one pass. Go directly to Step 2b.
+- **Complex** (a subsystem spanning multiple files/services, a cross-cutting feature, a full architectural overview): Use parallel exploration first, then hand off to a synthesizer. Go to Step 2a.
 
-When in doubt, lean toward the simple path — you can always spawn explorers if the explainer hits a wall.
+When in doubt, lean toward the simple path — you can always spawn additional explorers if the single pass hits a wall.
 
 ### Step 2a — Explore (complex questions only)
 
@@ -42,44 +42,36 @@ Decompose the question into 2-4 parallel exploration angles. Each angle should c
 
 The right decomposition depends on the question — use your judgment. For narrow questions, 2 explorers is fine. For broad subsystems, use up to 4.
 
-Spawn all explorers in a single message:
+For each angle, launch a `scout` (or `delegate` with `readonly: true` when free-form output is preferred). Each explorer should receive as task instructions:
+- The specific exploration angle telling it which slice to focus on
+- The content of `references/explorer-prompt.md` as guidance on tracing call chains, data flow, and noting non-obvious behavior
 
-- `subagent_type`: `generalPurpose`
-- `model`: `gpt-5.4`
-- `readonly`: `true`
-
-Each explorer gets the same base prompt from `references/explorer-prompt.md`, plus a specific exploration angle telling it which slice to focus on. Each explorer should:
+Each explorer should:
 - Start broad: Glob for relevant directories, Grep for key types/interfaces/class names
 - Follow the thread: once you find an entry point, trace the call chain — callers, callees, data flow, type definitions
 - Read the actual code, don't guess from file names
 - Stop when you can describe the full path from input to output (or from trigger to effect) without hand-waving any step
 - Note things that are surprising, non-obvious, or that a newcomer would get wrong
 
-Each explorer returns structured findings: the components it found, the flow it traced, the files it read, and anything non-obvious. Overlap between explorers is fine — the explainer will reconcile.
+Each explorer returns structured findings: the components it found, the flow it traced, the files it read, and anything non-obvious. The standard `scout` `context.md` output format accommodates flow-tracing findings; if using `delegate`, specify the desired output structure in the task instructions. Overlap between explorers is fine — the synthesizer will reconcile.
+
+Use AGENTS.md Pattern H (parallel scouts → single consolidator → parallel reviewers) for orchestration guidance.
 
 Then proceed to Step 3.
 
 ### Step 2b — Direct Explain (simple questions)
 
-Spawn a single Task subagent that explores and explains in one pass:
-
-- `subagent_type`: `generalPurpose`
-- `model`: `kimi k2p6`
-- `readonly`: `true`
-
-This agent does its own exploration (Glob, Grep, Read) and writes the explanation directly. Read `references/explainer-prompt.md` for the communication style and output format — the agent follows the same structure, it just doesn't have explorer findings as input.
+Use a single `scout` or `delegate` with `readonly: true` to explore and explain in one pass. This agent does its own exploration (Glob, Grep, Read) and writes the explanation directly. Pass the content of `references/explainer-prompt.md` as task instructions for communication style and output format.
 
 Proceed to Step 4.
 
 ### Step 3 — Synthesize (complex questions only)
 
-Once all explorers have returned, spawn a single Task subagent to synthesize their findings into one coherent explanation:
+Once all explorers have returned, use a single `delegate` or `planner` as consolidator to synthesize their findings into one coherent explanation. Pass as task instructions:
+- All explorer artifacts
+- The content of `references/explainer-prompt.md` for communication style and output format
 
-- `subagent_type`: `generalPurpose`
-- `model`: `kimi k2p6`
-- `readonly`: `true`
-
-The explainer gets all explorers' findings and writes the human-facing explanation (see output format below). Read `references/explainer-prompt.md` for the full prompt template. The explainer reconciles overlapping findings, resolves contradictions, and weaves the separate slices into a unified picture.
+The consolidator reconciles overlapping findings, resolves contradictions, and weaves the separate slices into a unified picture.
 
 ### Step 4 — Present
 
@@ -107,25 +99,17 @@ Triggered when the user asks for architectural issues, problems, or improvements
 
 Run the full explain flow above (Steps 1-4). You need to understand the architecture before you can critique it.
 
-### Step 2 — Spawn Critics
+### Step 2 — Critique
 
-After the explanation is complete, spawn architectural critics. Launch all in a single message:
+After the explanation is complete, launch architectural critics using `reviewer` agents in parallel. Use AGENTS.md Pattern H for this step.
 
-| Subagent | Model |
-|----------|-------|
-| Critic A | `kimi k2p6` |
-| Critic B | `kimi k2p6` |
-| Critic C | `gpt-5.4` |
-
-For each critic:
-- `subagent_type`: `generalPurpose`
-- `model`: the model from the table. These are starting suggestions — escalate to a higher reasoning tier of the same model family when the architecture warrants deeper analysis.
-- `readonly`: `true`
-
-Read `references/critic-prompt.md` for the prompt template. Each critic gets:
+For each critic, pass as task instructions:
 1. The explanation from Step 1 (so they don't waste time re-exploring)
 2. The relevant file paths (so they can read the actual code)
-3. The architectural critique rubric from `references/critique-rubric.md`
+3. The content of `references/critic-prompt.md`
+4. The content of `references/critique-rubric.md`
+
+Escalate to a higher reasoning tier when the architecture warrants deeper analysis.
 
 ### Step 3 — Lead Judgment
 

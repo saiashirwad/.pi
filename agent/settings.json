@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.70.2",
-  "theme": "dark",
+  "theme": "light",
   "packages": [
     "npm:pi-answer",
     "npm:@plannotator/pi-extension",
@@ -14,10 +14,12 @@
   ],
   "quietStartup": true,
   "hideThinkingBlock": false,
-  "defaultThinkingLevel": "low",
+  "defaultThinkingLevel": "high",
   "enabledModels": [
     "openai-codex/gpt-5.5",
-    "kimi-coding/k2p6"
+    "kimi-coding/k2p6",
+    "deepseek/deepseek-v4-flash",
+    "deepseek/deepseek-v4-pro"
   ],
   "pi-codex-fast": {
     "enabled": true
@@ -28,6 +30,6 @@
     "keepRecentTokens": 20000
   },
   "treeFilterMode": "user-only",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.5"
+  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-v4-pro"
 }
