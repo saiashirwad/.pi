@@ -1,10 +1,8 @@
 {
   "lastChangelogVersion": "0.70.2",
-  "theme": "light",
+  "theme": "dark",
   "packages": [
     "npm:pi-answer",
-    "npm:@plannotator/pi-extension",
-    "npm:pi-interactive-shell",
     "npm:pi-subagents",
     "npm:pi-nvim",
     "npm:@benvargas/pi-exa-mcp",
@@ -30,6 +28,7 @@
     "keepRecentTokens": 20000
   },
   "treeFilterMode": "user-only",
-  "defaultProvider": "deepseek",
-  "defaultModel": "deepseek-v4-pro"
+  "defaultProvider": "kimi-coding",
+  "defaultModel": "k2p6"
 }
+
