@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.70.2",
-  "theme": "dark",
+  "theme": "light",
   "packages": [
     "npm:pi-answer",
     "npm:pi-subagents",
@@ -8,7 +8,8 @@
     "npm:@benvargas/pi-exa-mcp",
     "npm:pi-mcp-adapter",
     "npm:pi-agent-browser",
-    "npm:@calesennett/pi-codex-fast"
+    "npm:@calesennett/pi-codex-fast",
+    "npm:pi-cursor-provider"
   ],
   "quietStartup": true,
   "hideThinkingBlock": false,
@@ -28,7 +29,6 @@
     "keepRecentTokens": 20000
   },
   "treeFilterMode": "user-only",
-  "defaultProvider": "kimi-coding",
-  "defaultModel": "k2p6"
+  "defaultProvider": "cursor",
+  "defaultModel": "composer-2-fast"
 }
-
