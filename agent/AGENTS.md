@@ -1,4 +1,3 @@
 - use `agent-browser` for web browser automation forms screenshots scraping and web app qa
-- delegate parallelizable exploratory or open-ended work aggressively via pi-subagents; orchestrate on main thread
 - use exa `web_search_exa` for web and `get_code_context_exa` for code/docs for external search summarize with sources
 - clone repos to /tmp/repos with --depth 1 to explore locally (check if already present)

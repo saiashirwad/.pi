@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.70.2",
+  "lastChangelogVersion": "0.73.0",
   "theme": "light",
   "packages": [
     "npm:pi-answer",
@@ -9,7 +9,8 @@
     "npm:pi-mcp-adapter",
     "npm:pi-agent-browser",
     "npm:@calesennett/pi-codex-fast",
-    "npm:pi-cursor-provider"
+    "npm:pi-cursor-provider",
+    "https://github.com/nicobailon/pi-boomerang"
   ],
   "quietStartup": true,
   "hideThinkingBlock": false,
@@ -29,6 +30,6 @@
     "keepRecentTokens": 20000
   },
   "treeFilterMode": "user-only",
-  "defaultProvider": "cursor",
-  "defaultModel": "composer-2-fast"
+  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-v4-flash"
 }
