@@ -10,7 +10,8 @@
     "npm:pi-agent-browser",
     "npm:@calesennett/pi-codex-fast",
     "npm:pi-cursor-provider",
-    "https://github.com/nicobailon/pi-boomerang"
+    "https://github.com/nicobailon/pi-boomerang",
+    "git:github.com/nicobailon/visual-explainer"
   ],
   "quietStartup": true,
   "hideThinkingBlock": false,

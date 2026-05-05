@@ -1,3 +1,4 @@
 - use `agent-browser` for web browser automation forms screenshots scraping and web app qa
 - use exa `web_search_exa` for web and `get_code_context_exa` for code/docs for external search summarize with sources
 - clone repos to /tmp/repos with --depth 1 to explore locally (check if already present)
+- activate `visual-explainer` skill for generating beautiful HTML pages: diagrams, diff reviews, plan reviews, slide decks, data tables — use slash commands like `/generate-web-diagram`, `/diff-review`, `/generate-slides`, `/generate-visual-plan`, `/plan-review`, `/project-recap`, `/fact-check`, `/share-page`
