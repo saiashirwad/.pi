@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { readFileSync, existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { type Static, StringEnum, Type } from "@mariozechner/pi-ai";
 import {
@@ -82,6 +83,12 @@ type DelegateParams = Static<typeof DelegateParams>;
 export type DelegateEffort = "fast" | "balanced" | "smart";
 export type DelegateThinking = "minimal" | "medium" | "high";
 
+export interface DelegateConfig {
+  models?: Partial<Record<DelegateEffort, string>>;
+  thinking?: Partial<Record<DelegateEffort, string>>;
+  timeout?: number;
+}
+
 export interface DelegateUsageStats {
 	turns: number;
 	input: number;
@@ -149,7 +156,11 @@ export async function formatDelegateOutput(
 	};
 }
 
-export function thinkingForEffort(effort: DelegateEffort): DelegateThinking {
+export function thinkingForEffort(
+	effort: DelegateEffort,
+	config?: DelegateConfig,
+): DelegateThinking {
+	if (config?.thinking?.[effort]) return config.thinking[effort] as DelegateThinking;
 	if (effort === "fast") return "minimal";
 	if (effort === "smart") return "high";
 	return "medium";
@@ -214,33 +225,73 @@ function modelName(
 	return `${model.provider}/${model.id}`;
 }
 
-export function resolveDelegateModel(ctx: ExtensionContext): {
+export function resolveDelegateModel(
+	ctx: ExtensionContext,
+	effort: DelegateEffort = "balanced",
+	config?: DelegateConfig,
+): {
 	model: ExtensionContext["model"];
 	fallbackReason?: string;
 } {
+	// 1. Try per-effort model from config
+	const configuredModelId = config?.models?.[effort];
+	if (configuredModelId) {
+		const slash = configuredModelId.indexOf("/");
+		if (slash !== -1) {
+			const provider = configuredModelId.slice(0, slash);
+			const id = configuredModelId.slice(slash + 1);
+			const found = ctx.modelRegistry.find(provider, id);
+			if (found && ctx.modelRegistry.hasConfiguredAuth(found)) {
+				return { model: found };
+			}
+		}
+	}
+
+	// 2. Fall back to DEFAULT_DELEGATE_MODEL
 	const preferred = ctx.modelRegistry.find(
 		DEFAULT_DELEGATE_MODEL.provider,
 		DEFAULT_DELEGATE_MODEL.id,
 	);
 	if (preferred && ctx.modelRegistry.hasConfiguredAuth(preferred)) {
-		return { model: preferred };
+		return {
+			model: preferred,
+			fallbackReason: configuredModelId
+				? `Configured model for ${effort} ("${configuredModelId}") unavailable; fell back to default.`
+				: undefined,
+		};
 	}
 
+	// 3. Fall back to parent model
 	if (ctx.model) {
 		return {
 			model: ctx.model,
-			fallbackReason: preferred
-				? `${modelName(preferred)} has no configured auth; used parent model.`
-				: `${REQUESTED_MODEL} was not found; used parent model.`,
+			fallbackReason: `No delegate-specific model available; using parent model.`,
 		};
 	}
 
 	return {
 		model: undefined,
-		fallbackReason: preferred
-			? `${modelName(preferred)} has no configured auth and no parent model was available.`
-			: `${REQUESTED_MODEL} was not found and no parent model was available.`,
+		fallbackReason: "No model available for delegation.",
 	};
+}
+
+export function loadDelegateConfig(cwd: string): DelegateConfig {
+  const globalPath = join(homedir(), ".pi", "agent", "settings.json");
+  const projectPath = join(cwd, ".pi", "settings.json");
+  let config: DelegateConfig = {};
+  for (const file of [globalPath, projectPath]) {
+    if (existsSync(file)) {
+      try {
+        const raw = JSON.parse(readFileSync(file, "utf-8"));
+        if (raw.delegate && typeof raw.delegate === "object") {
+          config = { ...config, ...raw.delegate };
+        }
+      } catch {
+        // skip unreadable files
+      }
+    }
+  }
+  return config;
 }
 
 export function childExtensionPaths(
@@ -351,6 +402,20 @@ function formatCollapsedPreview(text: string): {
 	return { text: preview, truncated, hiddenLines };
 }
 
+function parseDelegateArgs(args: string): { effort: DelegateEffort; task: string } {
+	const trimmed = args.trim();
+	if (!trimmed) return { effort: "balanced", task: "" };
+	const firstWord = trimmed.split(/\s+/)[0]?.toLowerCase() ?? "";
+	const validEfforts = ["fast", "balanced", "smart"];
+	const effort: DelegateEffort = validEfforts.includes(firstWord)
+		? (firstWord as DelegateEffort)
+		: "balanced";
+	const task = validEfforts.includes(firstWord) && trimmed.length > firstWord.length
+		? trimmed.slice(firstWord.length).trim()
+		: trimmed;
+	return { effort, task };
+}
+
 export default function delegateExtension(pi: ExtensionAPI) {
 	pi.registerTool<typeof DelegateParams, DelegateDetails>({
 		name: TOOL_NAME,
@@ -369,10 +434,11 @@ export default function delegateExtension(pi: ExtensionAPI) {
 		parameters: DelegateParams,
 		executionMode: "sequential",
 		async execute(_toolCallId, params, signal, onUpdate, ctx) {
+			const config = loadDelegateConfig(ctx.cwd);
 			const effort = normalizeEffort(params.effort);
-			const thinking = thinkingForEffort(effort);
+			const thinking = thinkingForEffort(effort, config);
 			const startedAt = Date.now();
-			const modelChoice = resolveDelegateModel(ctx);
+			const modelChoice = resolveDelegateModel(ctx, effort, config);
 			let toolCalls = 0;
 			let failedToolCalls = 0;
 			const childUsage = emptyUsageStats();
@@ -472,12 +538,14 @@ export default function delegateExtension(pi: ExtensionAPI) {
 					childUsage.cost += usage?.cost?.total ?? 0;
 				});
 
+				const timeoutMs = config?.timeout ?? TIMEOUT_MS;
+				const timeoutMinutes = Math.round(timeoutMs / 60000);
 				const timeoutPromise = new Promise<never>((_, reject) => {
 					timer = setTimeout(() => {
 						timedOut = true;
 						void abortChild();
-						reject(new Error("Timed out after 15 minutes"));
-					}, TIMEOUT_MS);
+						reject(new Error(`Timed out after ${timeoutMinutes} minutes`));
+					}, timeoutMs);
 				});
 
 				const abortPromise = new Promise<never>((_, reject) => {
@@ -705,6 +773,29 @@ export default function delegateExtension(pi: ExtensionAPI) {
 				return new Text(theme.fg("error", `failed • ${text}`), 0, 0);
 			}
 			return new Text(text, 0, 0);
+		},
+	});
+
+	pi.registerCommand("delegate", {
+		description: "Delegate a task to a child agent: /delegate [fast|balanced|smart] <task>",
+		getArgumentCompletions: (prefix) => {
+			prefix = (prefix ?? "").toLowerCase();
+			return ["fast", "balanced", "smart"]
+				.filter((e) => e.startsWith(prefix))
+				.map((e) => ({ value: e, label: e }));
+		},
+		handler: async (args, ctx) => {
+			const { effort, task } = parseDelegateArgs(args);
+			if (!task) {
+				ctx.ui.notify(
+					"Usage: /delegate [fast|balanced|smart] <task>",
+					"warning",
+				);
+				return;
+			}
+			pi.sendUserMessage(
+				`Use the delegate tool with effort="${effort}" for this task:\n\n${task}`,
+			);
 		},
 	});
 }

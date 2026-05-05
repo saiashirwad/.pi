@@ -31,7 +31,13 @@
     "keepRecentTokens": 20000
   },
   "treeFilterMode": "user-only",
+  "delegate": {
+    "models": {
+      "fast": "deepseek/deepseek-v4-flash",
+      "balanced": "deepseek/deepseek-v4-pro",
+      "smart": "openai-codex/gpt-5.5"
+    }
+  },
   "defaultProvider": "deepseek",
-  "defaultModel": "deepseek-v4-flash"
+  "defaultModel": "deepseek-v4-pro"
 }
-
