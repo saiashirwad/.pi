@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.73.0",
-  "theme": "dark",
+  "theme": "catppuccin-macchiato",
   "packages": [
     "npm:pi-answer",
     "npm:pi-subagents",
@@ -34,3 +34,4 @@
   "defaultProvider": "deepseek",
   "defaultModel": "deepseek-v4-flash"
 }
+
